@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+
+    <template inherit_id="stock_picking_report_delivery_by_product.report_delivery_document" id="report_delivery_document_inherited">
+        <!-- module sale_stock -->
+       <xpath expr="//div[@name='div_sched_date']" position="after">
+            <div class="col-auto justify-content-end" t-if="o.sudo().sale_id.client_order_ref">
+                <strong>Customer Reference:</strong>
+                <p t-field="o.sudo().sale_id.client_order_ref"/>
+            </div>
+        </xpath>
+
+        <!-- module stock_picking_transportation_info -->
+
+        <xpath expr="//table[@name='stock_move_by_product_table']" position="before">
+            <div class="row mt32 mb32" style="margin-top:10px !important;">
+                <div t-if="o.driver_id" class="col-auto" name="div_driver">
+                    <strong>Driver:</strong>
+                    <p t-field="o.driver_id.name"/>
+                </div>
+                <div t-if="o.vehicle_id" class="col-auto" name="div_vehicle">
+                    <strong>License plate:</strong>
+                    <p t-field="o.vehicle_id.license_plate"/>
+                </div>
+            </div>
+        </xpath>
+
+        <!-- module stock_picking_report_title -->
+
+        <xpath expr="//span[@t-field='o.name']" position="before">
+            <t t-if="o.picking_type_id.report_title">
+                <span t-field="o.picking_type_id.report_title"/> N°
+            </t>
+        </xpath>
+
+        <!-- module sale_stock_prepress_management -->
+
+        <xpath expr="//table[@name='stock_move_by_product_table']/thead/tr/th[@name='th_sm_product']" position="after">
+            <t t-if="o.picking_type_code == 'outgoing'">
+                <th name="th_sm_prepress_proof" width="12%"><strong>Prepress Proof</strong></th>
+                <th name="th_sm_client_ref"><strong>Customer Prepress proof reference</strong></th>
+            </t>
+        </xpath>
+        <xpath expr="//table[@name='stock_move_by_product_table']/tbody/tr/td[1]" position="after">
+            <t t-if="move['picking_id'].picking_type_code == 'outgoing'">
+               <td name="td_sm_prepress_proof">
+                   <span t-esc="move['prepress_proof_id'].name"/>
+               </td>
+               <td name="td_sm_prepress_proof_client_ref">
+                   <span t-esc="move['client_ref']"/>
+               </td>
+           </t>
+        </xpath>
+        <xpath expr="//table[@name='stock_move_by_product_table']/tbody" position="attributes">
+            <attribute name="style">font-size:9px important;</attribute>
+        </xpath>
+
+        <!-- module stock_picking_packaging_control -->
+        <xpath expr="//table[@name='stock_move_by_product_table']/thead/tr/th[@name='th_sm_quantity']" position="before">
+            <t t-if="o.picking_type_id.control_product_packaging">
+                <th name="th_sm_qty_by_packaging"><strong>Qty by packaging</strong></th>
+                <th name="th_sm_packaging_nbr"><strong>Nbr of packaging</strong></th>
+                <th name="th_sm_incomplete_qty"><strong>Incomplete Qty</strong></th>
+            </t>
+        </xpath>
+        <xpath expr="//table[@name='stock_move_by_product_table']/tbody/tr/td[3]" position="before">
+            <t t-if="o.picking_type_id.control_product_packaging">
+                <t t-set="packages" t-value="move['packages']"/>
+                <td>
+                    <table>
+                        <tr t-foreach="packages" t-as="package">
+                            <td><span t-esc="package['package'].name"/></td>
+                            <td>
+                                <span t-esc="package['qty_by_packaging']"
+                                      t-options="{'widget': 'float', 'decimal_precision': 'Product Unit of Measure'}"/>
+                                <span t-esc="move['product_uom'].name"/>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <span t-esc="move['packaging_nbr']"/>
+                </td>
+                <td>
+                    <span t-esc="move['incomplete_qty']"  t-options="{'widget': 'float', 'decimal_precision': 'Product Unit of Measure'}"/>
+                    <span t-esc="move['product_uom'].name"/>
+                </td>
+            </t>
+        </xpath>
+
+        <!-- module stock_picking_report_signature -->
+        <xpath expr="//div[hasclass('page')]" position="after">
+            <div class="last-page row col-xs-5" style="margin-top:70px !important;float:right !important;">
+                <h5><b>Storekeeper's name and visa </b></h5>
+            </div>
+        </xpath>
+
+        <!-- module stock_picking_report_customer_signature -->
+
+        <xpath expr="//div[hasclass('page')]" position="after">
+            <div t-if="o.picking_type_id.report_display_customer_signature" class="last-page row col-xs-5" style="margin-top:70px !important;float:left !important;">
+                <h5><b>Customer signature</b></h5>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>
