@@ -44,13 +44,15 @@ class Picking(models.Model):
                 if line.move_line_ids and line.state == 'done':
                     packaging_nbr = sum(line.move_line_ids.mapped("packaging_nbr"))
                     incomplete_qty = sum(line.move_line_ids.mapped("incomplete_qty"))
-                    for package_move_line in line.move_line_ids:
-                        packages.append({'package': package_move_line.result_package_id or self.env['stock.quant.package'],
-                                         'qty_by_packaging': package_move_line.qty_by_packaging})
+                    qty_by_packaging = line.move_line_ids.mapped("qty_by_packaging")[0]
+                    #for package_move_line in line.move_line_ids:
+                    #    packages.append({'package': package_move_line.result_package_id or self.env['stock.quant.package'],
+                    #                     'qty_by_packaging': package_move_line.qty_by_packaging})
 
                 else:
                     packaging_nbr = line.packaging_nbr
                     incomplete_qty = line.incomplete_qty
+                    qty_by_packaging = line.qty_by_packaging
                 lines_by_product_dict.update({line.product_id: {'serial_numbers': serial_numbers,
                                                                 'picking_id': line.picking_id,
                                                                 'product_uom_qty': line.product_uom_qty,
@@ -62,6 +64,7 @@ class Picking(models.Model):
                                                                 'packages': packages,
                                                                 'packaging_nbr': packaging_nbr,
                                                                 'incomplete_qty': incomplete_qty,
+                                                                'qty_by_packaging':qty_by_packaging
                                                                 }})
         for product, line in lines_by_product_dict.items():
             line.update({'product_id': product})

@@ -65,24 +65,28 @@
         </xpath>
         <xpath expr="//table[@name='stock_move_by_product_table']/tbody/tr/td[3]" position="before">
             <t t-if="o.picking_type_id.control_product_packaging">
-                <t t-set="packages" t-value="move['packages']"/>
+                <!--<t t-set="packages" t-value="move['packages']"/>
                 <td>
                     <table>
                         <tr t-foreach="packages" t-as="package">
                             <td><span t-esc="package['package'].name"/></td>
                             <td>
                                 <span t-esc="package['qty_by_packaging']"
-                                      t-options="{'widget': 'float', 'decimal_precision': 'Product Unit of Measure'}"/>
+                                      t-options="{'widget': 'float', 'decimal_precision': 'Package content Unit of Measure'}"/>
                                 <span t-esc="move['product_uom'].name"/>
                             </td>
                         </tr>
                     </table>
+                </td>-->
+                <td>
+                    <span t-esc="move['qty_by_packaging']" t-options="{'widget': 'float', 'decimal_precision': 'Package content Unit of Measure'}"/>
+                    <span t-esc="move['product_uom'].name"/>
                 </td>
                 <td>
                     <span t-esc="move['packaging_nbr']"/>
                 </td>
                 <td>
-                    <span t-esc="move['incomplete_qty']"  t-options="{'widget': 'float', 'decimal_precision': 'Product Unit of Measure'}"/>
+                    <span t-esc="move['incomplete_qty']"  t-options="{'widget': 'float', 'decimal_precision': 'Package content Unit of Measure'}"/>
                     <span t-esc="move['product_uom'].name"/>
                 </td>
             </t>
